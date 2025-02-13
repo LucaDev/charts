@@ -318,6 +318,9 @@ spec:
           {{- end }}
           volumeMounts:
             - name: empty-dir
+              mountPath: /certs
+              subPath: nginx-certs-dir
+            - name: empty-dir
               mountPath: /opt/bitnami/nginx/conf
               subPath: nginx-conf-dir
             - name: empty-dir
