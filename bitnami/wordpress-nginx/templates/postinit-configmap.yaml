@@ -15,30 +15,30 @@ metadata:
   {{- end }}
 data:
   {{- if .Values.wordpressConfigureCache }}
-  {{- $memcachedFullname := include "wordpress.cacheHost" . }}
-  {{- $memcachedPort := include "wordpress.cachePort" . | int }}
+  {{- $cacheFullname := include "wordpress.cacheHost" . }}
+  {{- $cachePort := include "wordpress.cachePort" . | int }}
+  {{- $cacheType := include "wordpress.cacheType" . }}
   00-configure-w3-total-cache.sh: |-
     #!/bin/bash
 
     # Add permissions to edit wp-config.php
-    chmod +w /bitnami/wordpress/wp-config.php
+    chmod +w /emptydir/app-base-dir/wp-config.php
 
     # Activate W3 Total Cache pairs
     wp plugin activate w3-total-cache
     wp total-cache fix_environment
 
-    # Choose 'Memcached' as database and object cache method
-    wp total-cache option set dbcache.engine memcached --type=string
-    wp total-cache option set objectcache.engine memcached --type=string
+    wp total-cache option set dbcache.engine {{ $cacheType }} --type=string
+    wp total-cache option set objectcache.engine {{ $cacheType }} --type=string
     wp total-cache flush all
-    wp total-cache option set dbcache.memcached.servers {{ $memcachedFullname }}:{{ $memcachedPort }} --type=string
+    wp total-cache option set dbcache.{{ $cacheType }}.servers {{ $cacheFullname }}:{{ $cachePort }} --type=string
     wp total-cache option set dbcache.enabled true --type=boolean
-    wp total-cache option set objectcache.memcached.servers {{ $memcachedFullname }}:{{ $memcachedPort }} --type=string
+    wp total-cache option set objectcache.{{ $cacheType }}.servers {{ $cacheFullname }}:{{ $cachePort }} --type=string
     wp total-cache option set objectcache.enabled true --type=boolean
     wp total-cache flush all
 
     # Revoke permissions to edit wp-config.php
-    chmod a-w /bitnami/wordpress/wp-config.php
+    chmod a-w /emptydir/app-base-dir/wp-config.php
   {{- end }}
   {{- if .Values.customPostInitScripts }}
   {{- include "common.tplvalues.render" (dict "value" .Values.customPostInitScripts "context" $) | nindent 2 }}

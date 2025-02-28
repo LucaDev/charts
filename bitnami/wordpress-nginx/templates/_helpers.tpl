@@ -193,7 +193,7 @@ Return the MariaDB Secret Name
 {{- end -}}
 
 {{/*
-Return the Memcached Hostname
+Return the cache hostname
 */}}
 {{- define "wordpress.cacheHost" -}}
 {{- if .Values.memcached.enabled }}
@@ -206,13 +206,28 @@ Return the Memcached Hostname
 {{- end -}}
 
 {{/*
-Return the Memcached Port
+Return the cache port
 */}}
 {{- define "wordpress.cachePort" -}}
 {{- if .Values.memcached.enabled }}
     {{- printf "11211" -}}
 {{- else -}}
     {{- printf "%d" (.Values.externalCache.port | int ) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return and validate the cache type
+*/}}
+{{- define "wordpress.cacheType" -}}
+{{- if .Values.memcached.enabled }}
+    {{- printf "memcached" -}}
+{{- else -}}
+    {{- $validCacheTypes := list "memcached" "redis" -}}
+    {{- if not (has .Values.myOption $validCacheTypes) -}}
+        {{- fail (printf "myOption must be one of %v" $validCacheTypes) -}}
+    {{- end -}}
+    {{- printf "%s" .Values.externalCache.type -}}
 {{- end -}}
 {{- end -}}
 
