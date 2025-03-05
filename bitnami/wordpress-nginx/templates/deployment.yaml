@@ -221,6 +221,10 @@ spec:
               value: {{ join "," .Values.wordpressPlugins | quote }}
             - name: WORDPRESS_OVERRIDE_DATABASE_SETTINGS
               value: {{ ternary "yes" "no" .Values.overrideDatabaseSettings | quote }}
+            {{- if .Values.ingress.enabled }}
+            - name: WORDPRESS_ENABLE_REVERSE_PROXY
+              value: "yes"
+            {{- end }}
             {{- end }}
             {{- if .Values.multisite.enable }}
             - name: WORDPRESS_ENABLE_MULTISITE
