@@ -273,8 +273,10 @@ spec:
             {{- end }}
             - name: NGINX_HTTP_PORT_NUMBER
               value: {{ .Values.containerPorts.http | quote }}
+            {{- if .Values.containerPorts.https }}
             - name: NGINX_HTTPS_PORT_NUMBER
               value: {{ .Values.containerPorts.https | quote }}
+            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
@@ -290,8 +292,10 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.containerPorts.http }}
+            {{- if .Values.containerPorts.https }}
             - name: https
               containerPort: {{ .Values.containerPorts.https }}
+            {{- end }}
             {{- if .Values.extraContainerPorts }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraContainerPorts "context" $) | nindent 12 }}
             {{- end }}
@@ -348,6 +352,9 @@ spec:
             - name: empty-dir
               mountPath: /opt/bitnami/wordpress
               subPath: app-base-dir
+            - name: empty-dir
+              mountPath: /bitnami/wordpress-nginx
+              subPath: bitnami-wordpress-nginx-dir
             - mountPath: /bitnami/wordpress
               name: wordpress-data
               subPath: wordpress

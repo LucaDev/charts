@@ -60,7 +60,9 @@ spec:
   ingress:
     - ports:
         - port: {{ .Values.containerPorts.http }}
+        {{- if .Values.containerPorts.https }}
         - port: {{ .Values.containerPorts.https }}
+        {{- end }}
         {{- range .Values.extraContainerPorts }}
         - port: {{ . }}
         {{- end }}

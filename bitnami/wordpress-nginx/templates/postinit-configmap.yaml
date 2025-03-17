@@ -21,9 +21,6 @@ data:
   00-configure-w3-total-cache.sh: |-
     #!/bin/bash
 
-    # Add permissions to edit wp-config.php
-    chmod +w /emptydir/app-base-dir/wp-config.php
-
     # Activate W3 Total Cache pairs
     wp plugin activate w3-total-cache
     wp total-cache fix_environment
@@ -36,9 +33,6 @@ data:
     wp total-cache option set objectcache.{{ $cacheType }}.servers {{ $cacheFullname }}:{{ $cachePort }} --type=string
     wp total-cache option set objectcache.enabled true --type=boolean
     wp total-cache flush all
-
-    # Revoke permissions to edit wp-config.php
-    chmod a-w /emptydir/app-base-dir/wp-config.php
   {{- end }}
   {{- if .Values.customPostInitScripts }}
   {{- include "common.tplvalues.render" (dict "value" .Values.customPostInitScripts "context" $) | nindent 2 }}
