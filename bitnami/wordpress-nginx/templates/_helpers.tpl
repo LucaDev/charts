@@ -99,9 +99,29 @@ Return the WordPress NGINX configuration configmap
 {{- end -}}
 
 {{/*
-Return true if a secret object should be created for NGINX configuration
+Return true if a configmap should be created for NGINX configuration
 */}}
 {{- define "wordpress.nginx.createConfigmap" -}}
+{{- if and .Values.nginxConfiguration (not .Values.existingNginxConfigurationConfigMap) }}
+    {{- true -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the WordPress NGINX server block additon
+*/}}
+{{- define "wordpress.nginx.serverblockConfigmapName" -}}
+{{- if .Values.existingCustomServerBlockAdditionConfigMap -}}
+    {{- printf "%s" (tpl .Values.existingCustomServerBlockAdditionConfigMap $) -}}
+{{- else -}}
+    {{- printf "%s-nginx-serverblock-addition" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a configmap should be created for NGINX server block additon
+*/}}
+{{- define "wordpress.nginx.createServerblockConfigmap" -}}
 {{- if and .Values.nginxConfiguration (not .Values.existingNginxConfigurationConfigMap) }}
     {{- true -}}
 {{- end -}}

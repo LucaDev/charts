@@ -1357,6 +1357,9 @@ memcached:
 ## All of these values are only used if `memcached.enabled=false`
 ##
 externalCache:
+  ## @param externalCache.type External cache server type. Can be one of memcached (default) and redis
+  ##
+  type: memcached
   ## @param externalCache.host External cache server host
   ##
   host: localhost

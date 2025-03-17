@@ -87,7 +87,7 @@ diagnosticMode:
 image:
   registry: docker.io
   repository: bitnami/wordpress-nginx
-  tag: 6.7.1-debian-12-r10
+  tag: 6.7.2-debian-12-r7
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -168,13 +168,20 @@ wordpressConfigureCache: false
 ## NOTE: If set to all, only plugins that are already installed will be activated, and if set to none, no plugins will be activated
 ##
 wordpressPlugins: none
-## @param nginxConfiguration The content for your custom httpd.conf file (advanced feature)
+## @param nginxConfiguration The content for your custom nginx.conf file (advanced feature)
 ##
 nginxConfiguration: ""
-## @param existingNginxConfigurationConfigMap The name of an existing secret with your custom httpd.conf file (advanced feature)
+## @param existingNginxConfigurationConfigMap The name of an existing secret with your custom nginx.conf file (advanced feature)
 ## NOTE: When it's set the `nginxConfiguration` parameter is ignored
 ##
 existingNginxConfigurationConfigMap: ""
+## @param nginxCustomServerBlockAddition Additional content that's being added to all NGINX server blocks
+##
+nginxCustomServerBlockAddition: ""
+## @param existingCustomServerBlockAdditionConfigMap The name of an existing configmap with content that's being added to all NGINX server blocks
+## NOTE: When it's set the `nginxCustomServerBlockAddition` parameter is ignored
+##
+existingCustomServerBlockAdditionConfigMap: ""
 ## @param customPostInitScripts Custom post-init.d user scripts
 ## ref: https://github.com/bitnami/containers/tree/main/bitnami/wordpress
 ## NOTE: supported formats are `.sh`, `.sql` or `.php`
@@ -1318,6 +1325,9 @@ memcached:
 ## All of these values are only used if `memcached.enabled=false`
 ##
 externalCache:
+  ## @param externalCache.type External cache server type. Can be one of memcached (default) and redis
+  ##
+  type: memcached
   ## @param externalCache.host External cache server host
   ##
   host: localhost

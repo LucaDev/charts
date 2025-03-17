@@ -359,7 +359,12 @@ spec:
             {{- if or .Values.nginxConfiguration .Values.existingNginxConfigurationConfigMap }}
             - name: nginx-config
               mountPath: /opt/bitnami/nginx/conf/nginx.conf
-              subPath: httpd.conf
+              subPath: nginx.conf
+            {{- end }}
+            {{- if or .Values.nginxCustomServerBlockAddition .Values.existingCustomServerBlockAdditionConfigMap }}
+            - name: nginx-serverblock-addition
+              mountPath: /opt/bitnami/nginx/conf/bitnami/01_userconfig.conf
+              subPath: 01_userconfig.conf
             {{- end }}
             {{- if or .Values.customPostInitScripts .Values.wordpressConfigureCache }}
             - mountPath: /docker-entrypoint-init.d
@@ -442,6 +447,12 @@ spec:
         - name: nginx-config
           configMap:
             name: {{ include "wordpress.nginx.configmapName" . }}
+            defaultMode: 0644
+        {{- end }}
+        {{- if or .Values.nginxCustomServerBlockAddition .Values.existingCustomServerBlockAdditionConfigMap }}
+        - name: nginx-serverblock-addition
+          configMap:
+            name: {{ include "wordpress.nginx.serverblockConfigmapName" . }}
             defaultMode: 0644
         {{- end }}
         {{- if or .Values.customPostInitScripts .Values.wordpressConfigureCache }}
