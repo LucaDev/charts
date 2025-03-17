@@ -45,4 +45,4 @@ maintainers:
 name: wordpress-nginx
 sources:
 - https://github.com/bitnami/charts/tree/main/bitnami/wordpress-nginx
-version: 24.1.11
+version: 24.1.12
