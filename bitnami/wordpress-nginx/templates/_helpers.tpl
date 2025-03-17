@@ -224,8 +224,8 @@ Return and validate the cache type
     {{- printf "memcached" -}}
 {{- else -}}
     {{- $validCacheTypes := list "memcached" "redis" -}}
-    {{- if not (has .Values.myOption $validCacheTypes) -}}
-        {{- fail (printf "myOption must be one of %v" $validCacheTypes) -}}
+    {{- if not (has .Values.externalCache.type $validCacheTypes) -}}
+        {{- fail (printf "externalCache.type must be one of %v" $validCacheTypes) -}}
     {{- end -}}
     {{- printf "%s" .Values.externalCache.type -}}
 {{- end -}}
