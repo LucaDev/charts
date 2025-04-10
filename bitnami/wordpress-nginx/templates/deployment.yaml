@@ -146,10 +146,24 @@ spec:
                 cp -r /opt/bitnami/php/var /emptydir/php-var-dir
               fi
 
+            {{- if or .Values.nginxCustomServerBlockAddition .Values.existingCustomServerBlockAdditionConfigMap }}
+
+              info "Copying nginx server block additions"
+              if ! is_dir_empty /nginx-serverblock-addition; then
+                mkdir -p /emptydir/nginx-conf-dir/bitnami/
+                cp -r /nginx-serverblock-addition/*.conf /emptydir/nginx-conf-dir/bitnami/;
+              fi
+            {{- end }}
+
               info "Copy operation completed"
           volumeMounts:
             - name: empty-dir
               mountPath: /emptydir
+            {{- if or .Values.nginxCustomServerBlockAddition .Values.existingCustomServerBlockAdditionConfigMap }}
+            - name: nginx-serverblock-addition
+              mountPath: /nginx-serverblock-addition/01_userconfig.conf
+              subPath: 01_userconfig.conf
+            {{- end }}
         {{- if .Values.initContainers }}
         {{- include "common.tplvalues.render" (dict "value" .Values.initContainers "context" $) | nindent 8 }}
         {{- end }}
@@ -321,9 +335,9 @@ spec:
           resources: {{- include "common.resources.preset" (dict "type" .Values.resourcesPreset) | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: empty-dir
+            - name: wordpress-data
               mountPath: /certs
-              subPath: nginx-certs-dir
+              subPath: certs
             - name: empty-dir
               mountPath: /opt/bitnami/nginx/conf
               subPath: nginx-conf-dir
@@ -348,6 +362,9 @@ spec:
             - name: empty-dir
               mountPath: /opt/bitnami/wordpress
               subPath: app-base-dir
+            - name: empty-dir
+              mountPath: /bitnami/wordpress-nginx
+              subPath: bitnami-wordpress-nginx-dir
             - mountPath: /bitnami/wordpress
               name: wordpress-data
               subPath: wordpress
@@ -360,11 +377,6 @@ spec:
             - name: nginx-config
               mountPath: /opt/bitnami/nginx/conf/nginx.conf
               subPath: nginx.conf
-            {{- end }}
-            {{- if or .Values.nginxCustomServerBlockAddition .Values.existingCustomServerBlockAdditionConfigMap }}
-            - name: nginx-serverblock-addition
-              mountPath: /opt/bitnami/nginx/conf/bitnami/01_userconfig.conf
-              subPath: 01_userconfig.conf
             {{- end }}
             {{- if or .Values.customPostInitScripts .Values.wordpressConfigureCache }}
             - mountPath: /docker-entrypoint-init.d
