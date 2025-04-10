@@ -33,6 +33,7 @@ data:
     wp total-cache option set objectcache.{{ $cacheType }}.servers {{ $cacheFullname }}:{{ $cachePort }} --type=string
     wp total-cache option set objectcache.enabled true --type=boolean
     wp total-cache flush all
+
   {{- end }}
   {{- if .Values.customPostInitScripts }}
   {{- include "common.tplvalues.render" (dict "value" .Values.customPostInitScripts "context" $) | nindent 2 }}
